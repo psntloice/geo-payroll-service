@@ -17,15 +17,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // PayPeriodsTableSeeder::class,
             // EmployeesTableSeeder::class,
-            // DeductionsTableSeeder::class,
+            DeductionsTableSeeder::class,
+            EarningsTableSeeder::class,
             PayrollTableSeeder::class
-            // EarningsTableSeeder::class
+
         ]);
 
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
     }
 }
