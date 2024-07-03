@@ -11,11 +11,7 @@ class Deduction extends Model
     protected $primaryKey = 'deductionID';
     // protected $fillable = ['employeeID', 'payPeriodID', 'deductionType', 'amount', 'taxID'];
 
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employeeID');
-    }
-
+  
     public function payPeriod()
     {
         return $this->belongsTo(PayPeriod::class, 'payPeriodID');

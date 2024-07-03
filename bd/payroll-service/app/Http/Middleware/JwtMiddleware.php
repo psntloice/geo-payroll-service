@@ -28,9 +28,10 @@ class JwtMiddleware extends BaseMiddleware
              // Extract email and role from the payload
              $email = $payload->get('email');
              $role = $payload->get('role');
- 
+             $token = $payload->get('token');
+
              // Adding email and role to request attributes
-             $request->attributes->add(['email' => $email, 'role' => $role]);
+             $request->attributes->add(['email' => $email, 'role' => $role, 'token' => $token]);
         } catch (Exception $e) {
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 Log::error('JWT Token Invalid', ['exception' => $e->getMessage()]);

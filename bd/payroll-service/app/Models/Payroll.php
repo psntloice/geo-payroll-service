@@ -11,10 +11,6 @@ class Payroll extends Model
 
     // protected $fillable = ['employeeID', 'payPeriodID', 'totalEarnings', 'totalDeductions', 'netPay'];
     protected $table = 'payroll';
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employeeID');
-    }
 
     public function payPeriod()
     {

@@ -10,53 +10,43 @@ use Illuminate\Support\Facades\Log;
 class EarningController extends Controller
 {
     public function index()
-    {
-        // $token = 'Bearer ' . 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5NjYxNDk4LCJpYXQiOjE3MTk1NzUwOTgsImp0aSI6IjFhZTgxZTY3NWQyNTQ2ZDdhMTNhNDZlNTYwYTE5YmQ0IiwidXNlcl9pZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.sMoHzVyzP6fMvwHE0lP5kuxq7XQHkSX1oCUINl3y7_0';
-        $token = 'Bearer ' . 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5NjYxNDk4LCJpYXQiOjE3MTk1NzUwOTgsImp0aSI6IjFhZTgxZTY3NWQyNTQ2ZDdhMTNhNDZlNTYwYTE5YmQ0IiwidXNlcl9pZCI6MSwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4ifQ.sMoHzVyzP6fMvwHE0lP5kuxq7XQHkSX1oCUINl3y7_0';
-
-        $employeeResponse = Http::withHeaders([
-            'Authorization' => $token,
-        ])->get('https://geo-employee-service.vercel.app/api/employees/');
-        // return Earning::all();
-        // $employeeResponse = Http::get(env('EMPLOYEE_SERVICE_BASE_URL') . '/employees/' );
-        if ($employeeResponse->failed()) {
-            Log::error('Failed to fetch employee data from external service: ' . $employeeResponse->status());
-            return response()->json(['error' => 'Employee not found'], 404);
-        }
-        else return $employeeResponse;
-
-      
-
+    {       
+        return Earning::all();  
 
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'payroll_record_id' => 'required|integer|exists:payroll_records,id',
-            'type' => 'required|string',
+            'payPeriodID' => 'required|integer|exists:pay_periods,payPeriodID',
+            'employeeID' => 'required|integer',
+            'earningType' => 'required|string',
             'amount' => 'required|numeric',
         ]);
-        $employeeResponse = Http::get(env('EMPLOYEE_SERVICE_BASE_URL') . '/employees/' . $validated['employee_id']);
-        if ($employeeResponse->failed()) {
-            return response()->json(['error' => 'Employee not found'], 404);
-        }
+        Log::info('Validated data:', $validated);
         return Earning::create($validated);
     }
 
     public function show($id)
     {
-        return Earning::findOrFail($id);
+        $earning = Earning::where('earningID', $id)->first();
+        if (!$earning) {
+            return response()->json(['message' => 'not found'], 404);
+        }
+        return $earning;
     }
 
     public function update(Request $request, $id)
     {
-        $earning = Earning::findOrFail($id);
-
+        $earning = Earning::where('earningID', $id)->first();
+        if (!$earning) {
+            return response()->json(['message' => 'not found'], 404);
+        }
         $validated = $request->validate([
-            'payroll_record_id' => 'sometimes|integer|exists:payroll_records,id',
-            'type' => 'sometimes|string',
-            'amount' => 'sometimes|numeric',
+            'payPeriodID' => 'required|integer|exists:pay_periods,payPeriodID',
+            'employeeID' => 'required|integer',
+            'earningType' => 'required|string',
+            'amount' => 'required|numeric',
         ]);
 
         $earning->update($validated);
@@ -66,9 +56,12 @@ class EarningController extends Controller
 
     public function destroy($id)
     {
-        $earning = Earning::findOrFail($id);
+        $earning = Earning::where('earningID', $id)->first();
+        if (!$earning) {
+            return response()->json(['message' => 'not found'], 404);
+        }
         $earning->delete();
 
-        return response()->noContent();
+        return response()->json(['message' => 'deleted successfully']);;
     }
 }

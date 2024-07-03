@@ -4,47 +4,105 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Exception\RequestException;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Employee::all();
+
+        // return Employee::all();
+
+        try {
+
+            $baseUrl = env('EMPLOYEE_SERVICE_BASE_URL');
+            $tokn = JWTAuth::getToken();
+
+            if (!$tokn) {
+                return response()->json(['error' => 'Token not provided'], 400);
+            }
+
+            $tokenString = (string) $tokn;
+            // $employeeResponse = Http::withHeaders([
+            //     'Authorization' => $token,
+            // ])->get('https://geo-employee-service.vercel.app/api/employees/');
+
+            // Make a request to another endpoint with the token in the Authorization header
+            $client = new Client();
+            // $response = $client->request('GET', 'https://geo-employee-service.vercel.app/api/employees/', [
+
+            $response = $client->request('GET', $baseUrl . '/employees/', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $tokenString,
+                ],
+            ]);
+
+            $statusCode = $response->getStatusCode();
+
+
+            // return Earning::all();
+            // $employeeResponse = Http::get(env('EMPLOYEE_SERVICE_BASE_URL') . '/employees/' );
+            if ($statusCode !== 200) {
+                Log::error('Failed to fetch employee data from external service: ' . $statusCode);
+                return response()->json(['error' => 'Failed to fetch employee data'], 404);
+            } else {
+
+                // Process the response as needed
+                $employeeResponse = json_decode($response->getBody(), true);
+
+                return response()->json($employeeResponse);
+            }
+        } catch (Exception $e) {
+            Log::error('JWT Token Invalid', ['exception' => $e->getMessage()]);
+        }
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email',
-            'salary' => 'required|numeric',
-        ]);
 
-        return Employee::create($validated);
+ 
+    // public function show(Employee $employee)
+    public function show(Request $request, $employeeId)
+
+    {
+        try {
+            $baseUrl = env('EMPLOYEE_SERVICE_BASE_URL');
+            $token = JWTAuth::getToken();
+
+            if (!$token) {
+                return response()->json(['error' => 'Token not provided'], 400);
+            }
+
+            $tokenString = (string) $token;
+
+            // Make request to fetch a specific employee
+            $client = new Client();
+            $response = $client->request('GET', $baseUrl . '/employees/' . $employeeId, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $tokenString,
+                ],
+            ]);
+
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode !== 200) {
+                Log::error('Failed to fetch employee data from external service: ' . $statusCode);
+                return response()->json(['error' => 'Failed to fetch employee data'], 404);
+            }
+
+            // Process the response as needed
+            $employee = json_decode($response->getBody(), true);
+
+            return response()->json($employee);
+        } catch (\Exception $e) {
+            Log::error('Error fetching specific employee', ['exception' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred'], 500);
+        }
     }
 
-    public function show(Employee $employee)
-    {
-        return $employee;
-    }
-
-    public function update(Request $request, Employee $employee)
-    {
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:employees,email,' . $employee->id,
-            'salary' => 'sometimes|numeric',
-        ]);
-
-        $employee->update($validated);
-
-        return $employee;
-    }
-
-    public function destroy(Employee $employee)
-    {
-        $employee->delete();
-
-        return response()->noContent();
-    }
+   
 }

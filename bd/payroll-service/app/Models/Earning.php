@@ -10,11 +10,7 @@ class Earning extends Model
     use HasFactory;
     protected $primaryKey = 'earningID';
     // protected $fillable = ['employeeID', 'payPeriodID', 'earningType', 'amount'];
-
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employeeID');
-    }
+    protected $fillable = ['payPeriodID', 'employeeID'];
 
     public function payPeriod()
     {

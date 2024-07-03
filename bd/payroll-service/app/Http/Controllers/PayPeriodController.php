@@ -15,9 +15,10 @@ class PayPeriodController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            // 'payroll_record_id' => 'required|integer|exists:payroll_records,id',
             'payPeriodStart' => 'required|date',
             'payPeriodEnd' => 'required|date',
+            'paydate' => 'required|date',
+
         ]);
 
         return PayPeriod::create($validated);
@@ -25,29 +26,42 @@ class PayPeriodController extends Controller
 
     public function show($id)
     {
-        return PayPeriod::findOrFail($id);
+        $payPeriod =  PayPeriod::where('payPeriodID', $id)->first();
+        if (!$payPeriod) {
+            return response()->json(['message' => 'not found'], 404);
+        }
+        return $payPeriod;
     }
 
     public function update(Request $request, $id)
     {
-        $payPeriod = PayPeriod::findOrFail($id);
-
+        $payPeriod = PayPeriod::where('payPeriodID', $id)->first();
+        if (!$payPeriod) {
+            return response()->json(['message' => 'not found'], 404);
+        }
+        else{
         $validated = $request->validate([
-            // 'payroll_record_id' => 'sometimes|integer|exists:payroll_records,id',
-            'payPeriodStart' => 'sometimes|date',
-            'payPeriodEnd' => 'sometimes|date',
+            'payPeriodStart' => 'required|date',
+            'payPeriodEnd' => 'required|date',
+            'paydate' => 'required|date',
         ]);
 
         $payPeriod->update($validated);
 
         return $payPeriod;
     }
+    }
+
 
     public function destroy($id)
     {
-        $payPeriod = PayPeriod::findOrFail($id);
-        $payPeriod->delete();
+        $payPeriod = PayPeriod::where('payPeriodID', $id)->first();
+        if (!$payPeriod) {
+            return response()->json(['message' => 'not found'], 404);
+        }
+                $payPeriod->delete();
 
-        return response()->noContent();
-    }
+                return response()->json(['message' => 'deleted successfully']);;
+            
+}
 }

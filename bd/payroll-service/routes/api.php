@@ -5,11 +5,20 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PayPeriodController;
 use App\Http\Controllers\EarningController;
 use App\Http\Controllers\DeductionController;
-Route::middleware(['jwt.verify'])->group(function () {
+Route::middleware(['jwt.verify', 'error.handler'])->group(function () {
     Route::resource('payPeriods', PayPeriodController::class);
     Route::resource('earnings', EarningController::class);
     Route::resource('deductions', DeductionController::class);
-    Route::get('/payrolls', [PayrollController::class, 'index']);
+    Route::resource('payrolls', PayrollController::class);
+
+    // Route::get('/payrolls', [PayrollController::class, 'index']);
+    // Route::get('/payPeriods/{id}', [EmployeeController::class, 'show']);
+    // Route::get('/payPeriods/{id}', [EmployeeController::class, 'show']);
+    // Route::put('/payPeriods/{id}', [EmployeeController::class, 'update']);
+    // Route::delete('/payPeriods/{id}', [EmployeeController::class, 'destroy']);
+
+
+    Route::get('/employees', [EmployeeController::class, 'show']);
 
     Route::resource('employees', EmployeeController::class);
 

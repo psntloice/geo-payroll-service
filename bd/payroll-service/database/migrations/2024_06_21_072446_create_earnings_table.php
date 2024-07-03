@@ -21,7 +21,6 @@ return new class extends Migration
 
             // Index and foreign key constraint to reference employees
             // No foreign key constraint because it's across different microservices
-            // $table->foreign('employeeID')->references('id')->on('employees');
 
             $table->foreign('payPeriodID')->references('payPeriodID')->on('pay_periods');
         });

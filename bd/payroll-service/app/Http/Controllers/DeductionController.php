@@ -14,9 +14,11 @@ class DeductionController extends Controller
 
     public function store(Request $request)
     {
+       
         $validated = $request->validate([
-            'payroll_record_id' => 'required|integer|exists:payroll_records,id',
-            'type' => 'required|string',
+            'payPeriodID' => 'required|integer|exists:payPeriodID',
+            'employeeID' => 'required|integer|exists:employeeID',
+            'deductionType' => 'required|string',
             'amount' => 'required|numeric',
         ]);
 
@@ -25,17 +27,27 @@ class DeductionController extends Controller
 
     public function show($id)
     {
-        return Deduction::findOrFail($id);
+        $deduction = Deduction::where('deductionID', $id)->first();
+        if (!$deduction) {
+            return response()->json(['message' => 'not found'], 404);
+        }
+        return $deduction;
     }
 
     public function update(Request $request, $id)
     {
-        $deduction = Deduction::findOrFail($id);
+            
 
+
+        $deduction = Deduction::where('deductionID', $id)->first();
+        if (!$deduction) {
+            return response()->json(['message' => 'not found'], 404);
+        }
         $validated = $request->validate([
-            'payroll_record_id' => 'sometimes|integer|exists:payroll_records,id',
-            'type' => 'sometimes|string',
-            'amount' => 'sometimes|numeric',
+            'payPeriodID' => 'required|integer|exists:payPeriodID',
+            'employeeID' => 'required|integer|exists:employeeID',
+            'deductionType' => 'required|string',
+            'amount' => 'required|numeric',
         ]);
 
         $deduction->update($validated);
@@ -45,9 +57,12 @@ class DeductionController extends Controller
 
     public function destroy($id)
     {
-        $deduction = Deduction::findOrFail($id);
+        $deduction = Deduction::where('deductionID', $id)->first();
+        if (!$deduction) {
+            return response()->json(['message' => 'not found'], 404);
+        }
         $deduction->delete();
 
-        return response()->noContent();
+        return response()->json(['message' => 'deleted successfully']);;
     }
 }
