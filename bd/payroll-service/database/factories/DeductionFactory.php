@@ -18,24 +18,19 @@ class DeductionFactory extends Factory
      */
     public function definition(): array
     {
-        // Fetch employee IDs from an external service
-        // $employeeIDs = $this->getEmployeeIDsFromExternalService();
+     
 
         return [
-            // 'employeeID' => $this->faker->randomElement($employeeIDs),
-            'employeeID' => $this->faker->unique()->numberBetween(1, 100),
+            'deductionID' => $this->faker->unique()->numberBetween(1, 100),
+            'employeeID' => $this->faker->numberBetween(1, 100),
             'payPeriodID' => PayPeriod::inRandomOrder()->first()->payPeriodID,
             'deductionType' => $this->faker->randomElement(['Tax', 'Insurance', 'Retirement']),
             'amount' => $this->faker->randomFloat(2, 10, 500),
+            'created_at' => now(),
+            'updated_at' => now(),
             // 'taxID' => Tax::inRandomOrder()->first()->taxID,
         ];
     }
 
-    // private function getEmployeeIDsFromExternalService()
-    // {
-    //     // Example API call to get employee IDs
-    //     $response = Http::get('https://external-service.com/api/employees');
-    //     $employees = $response->json();
-    //     return array_column($employees, 'id'); // Adjust based on your API response structure
-    // }
+
 }

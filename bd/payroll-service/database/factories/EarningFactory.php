@@ -19,13 +19,14 @@ class EarningFactory extends Factory
     {
         return [
             'earningID' => $this->faker->unique()->numberBetween(1, 100),
-            // 'employeeID' => Employee::factory(),
-            // 'payPeriodID' => PayPeriod::factory(),
-            // 'employeeID' => Employee::inRandomOrder()->first()->id,
-            'employeeID' => $this->faker->unique()->numberBetween(1, 100),
+
+            'employeeID' => $this->faker->numberBetween(1, 100),
             'payPeriodID' => PayPeriod::inRandomOrder()->first()->payPeriodID,
             'earningType' => $this->faker->randomElement(['Salary', 'Bonus', 'Commission']),
             'amount' => $this->faker->randomFloat(2, 100, 10000),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
+    
 }

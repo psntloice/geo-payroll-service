@@ -11,7 +11,7 @@ Route::middleware(['jwt.verify', 'error.handler'])->group(function () {
     Route::resource('deductions', DeductionController::class);
     Route::resource('payrolls', PayrollController::class);
 
-    // Route::get('/payrolls', [PayrollController::class, 'index']);
+    // Route::get('/payrolls/{id}', [PayrollController::class, 'show']);
     // Route::get('/payPeriods/{id}', [EmployeeController::class, 'show']);
     // Route::get('/payPeriods/{id}', [EmployeeController::class, 'show']);
     // Route::put('/payPeriods/{id}', [EmployeeController::class, 'update']);

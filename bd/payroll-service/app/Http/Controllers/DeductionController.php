@@ -16,8 +16,8 @@ class DeductionController extends Controller
     {
        
         $validated = $request->validate([
-            'payPeriodID' => 'required|integer|exists:payPeriodID',
-            'employeeID' => 'required|integer|exists:employeeID',
+            'payPeriodID' => 'required|integer|exists:pay_periods,payPeriodID',
+            'employeeID' => 'required|integer',
             'deductionType' => 'required|string',
             'amount' => 'required|numeric',
         ]);
@@ -44,8 +44,8 @@ class DeductionController extends Controller
             return response()->json(['message' => 'not found'], 404);
         }
         $validated = $request->validate([
-            'payPeriodID' => 'required|integer|exists:payPeriodID',
-            'employeeID' => 'required|integer|exists:employeeID',
+            'payPeriodID' => 'required|integer|exists:pay_periods,payPeriodID',
+            'employeeID' => 'required|integer',
             'deductionType' => 'required|string',
             'amount' => 'required|numeric',
         ]);
