@@ -5,7 +5,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PayPeriodController;
 use App\Http\Controllers\EarningController;
 use App\Http\Controllers\DeductionController;
-Route::middleware(['jwt.verify', 'error.handler'])->group(function () {
+Route::middleware('jwt.verify')->group(function () {
     Route::resource('payPeriods', PayPeriodController::class);
     Route::resource('earnings', EarningController::class);
     Route::resource('deductions', DeductionController::class);
