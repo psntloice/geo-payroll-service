@@ -27,6 +27,8 @@ class EarningController extends Controller
         return Earning::create($validated);
     }
 
+    
+
     public function show($id)
     {
         $earning = Earning::where('earningID', $id)->first();
