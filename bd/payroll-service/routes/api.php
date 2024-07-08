@@ -17,12 +17,12 @@ use App\Http\Controllers\DeductionController;
     // Route::delete('/payPeriods/{id}', [EmployeeController::class, 'destroy']);
 
 
-    Route::get('/employees', [EmployeeController::class, 'show']);
-
-    Route::resource('employees', EmployeeController::class);
+ 
     Route::middleware('jwt.verify')->group(function () {
 
+        Route::get('/employees', [EmployeeController::class, 'show']);
 
+        Route::resource('employees', EmployeeController::class);
 });
 // Route::resource('payrolls', PayrollController::class);
 

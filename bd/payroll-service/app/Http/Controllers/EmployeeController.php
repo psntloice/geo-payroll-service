@@ -22,6 +22,8 @@ class EmployeeController extends Controller
         try {
 
             $baseUrl = env('EMPLOYEE_SERVICE_BASE_URL');
+            $baseUrlString = (string) $baseUrl;
+
             $tokn = JWTAuth::getToken();
 
             if (!$tokn) {
@@ -36,12 +38,15 @@ class EmployeeController extends Controller
             // Make a request to another endpoint with the token in the Authorization header
             $client = new Client();
             // $response = $client->request('GET', 'https://geo-employee-service.vercel.app/api/employees/', [
-
-            $response = $client->request('GET', $baseUrl . '/employees/', [
+                Log::info('Request URL: ' . $baseUrlString);
+            $response = $client->request('GET',  $baseUrlString . '/employees/', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $tokenString,
+                'Accept' => 'application/json',
                 ],
             ]);
+            $responseBody = $response->getBody()->getContents();
+            Log::info('External service response: ' . $responseBody);
 
             $statusCode = $response->getStatusCode();
 
